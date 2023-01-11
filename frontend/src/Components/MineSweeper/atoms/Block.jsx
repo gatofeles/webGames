@@ -3,8 +3,17 @@ import './Block.css';
 
 const Block = (props) => {
 
+    const handleClick = (e) =>{
+        if(props.hasBomb == 'bomb'){
+            e.target.className = 'block block-danger';
+        }
+        else{
+            e.target.className = 'block block-free';
+        }
+    }
+
     return(
-        <div className='block-inactive'></div>
+        <div onClick = {handleClick} className='block block-inactive'></div>
     );
 }
 

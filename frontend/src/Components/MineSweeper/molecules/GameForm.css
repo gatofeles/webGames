@@ -1,0 +1,23 @@
+.gameForm{
+    font-size: 0.7rem;
+    background-color: #E6DDC4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 5px;
+    gap: 10px;
+    width: 50%;
+    height: 100%;
+    margin: 20px;
+    padding: 20px;
+}
+
+.inputWrap{
+    display: flex;
+    gap: 10px;
+}
+
+.input{
+    height: 1.2rem;
+    width: 50px;
+}
