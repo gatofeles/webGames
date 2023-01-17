@@ -10,7 +10,7 @@ const GameForm = (props) => {
 
     useEffect(() => {
         getBombLimit();
-      });
+    });
 
     const getBombLimit = () => {
         if (currentSize !== "") {
@@ -20,7 +20,6 @@ const GameForm = (props) => {
     }
 
     const handleSubmit = () => {
-        console.log("Callled")
         if (currentSize !== "" && bombs > 0) {
             const dimensions = currentSize.split("x");
             props.onSubmit(dimensions[0], dimensions[1], bombs);

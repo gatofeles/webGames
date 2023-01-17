@@ -4,7 +4,7 @@ import DropDownMenu from '../atoms/DropDownMenu';
 
 const Navbar = (props) => {
     return <div className='nav'>
-        <DropDownMenu/>
+        <DropDownMenu />
         <div className='title'>{props.title}</div>
     </div>
 }

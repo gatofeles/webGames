@@ -2,25 +2,26 @@ import React from 'react';
 import Block from '../atoms/Block';
 import './Field.css';
 
-const Field = (props) => {
+const Row = (props) => {
+    return (
+        <tr>
+            {props.row.map((element) => { return <td key={element.rowIndex + "x" + element.columnIndex} ><Block onUpdateMatrix={props.onUpdateMatrix} block={element} /></td> })}
+        </tr>
+    )
+}
 
-    const Row = (props) => {
-        return (
-            <tr>
-                {props.row.map((element) => { return <td><Block hasBomb={element} /></td> })}
-            </tr>
-        )
-    }
+
+const Field = (props) => {
 
     return (
         <table className='row'>
-
-            {
-                props.matrix.map((row) => {
-                    return <Row key={props.matrix.indexOf(row)} row={row} />
-                })
-            }
-
+            <tbody>
+                {
+                    props.matrix.map((row) => {
+                        return <Row key={props.matrix.indexOf(row)} onUpdateMatrix={props.onUpdateMatrix} row={row} />
+                    })
+                }
+            </tbody>
         </table>
 
     );
