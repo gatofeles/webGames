@@ -25,7 +25,7 @@ const GameForm = (props) => {
             props.onSubmit(dimensions[0], dimensions[1], bombs);
         }
         else {
-            console.log("You should fill the dimension and the number of bombs.");
+            window.confirm("You should fill the dimension and the number of bombs.");
         }
     }
 
@@ -46,7 +46,7 @@ const GameForm = (props) => {
                     <input onChange={handleBombChange} value={bombs.toString()} min={1} max={bombLimit} className='input' type="number" id="bombs" name="bombs"></input>
                 </div>
             </div>
-            <GameBtn onSubmit={handleSubmit} title={'Set Field'} />
+            {!props.gameStarted?<GameBtn onSubmit={handleSubmit} title={'Set Field'} />:<GameBtn onSubmit={props.onGameRestart} title={'Restart Game'} />}
         </form>);
 }
 

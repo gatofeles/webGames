@@ -2,10 +2,33 @@ import React, { useState } from 'react';
 import Navbar from '../molecules/Navbar';
 import Field from '../molecules/Field';
 import GameForm from '../molecules/GameForm';
+import Modal from '../atoms/Modal';
 import './GameManager.css';
 
 const GameManager = () => {
     const [fieldMatrix, setFieldMatrix] = useState([]);
+    const [winner, setWinner] = useState(false);
+    const [gameStarted, setGameStarted] = useState(false);
+    const [bombNumber, setBombNumber] = useState(0);
+    const [exploded, setExploded] = useState(false);
+    const title = 'Minesweeper';
+
+    const checkIfGameEnded = () =>{
+        const fieldSize = fieldMatrix.length * fieldMatrix[0].length;
+        let freedNumber = 0;
+        for (let row = 0; row < fieldMatrix.length; row++) {
+            for (let column = 0; column < fieldMatrix[0].length; column++){
+                if(!fieldMatrix[row][column].hasBomb && fieldMatrix[row][column].clicked){
+                    freedNumber++;
+                }
+            }
+        }
+
+        if(fieldSize - bombNumber === freedNumber){
+            setWinner(true);
+        }
+
+    }
 
     const checkBoundaries = (column, row, matrix) => {
         return row >= 0 && row < matrix.length && column >= 0 && column < matrix[0].length
@@ -41,23 +64,32 @@ const GameManager = () => {
 
     const updateMatrix = (clickedColumn, clickedRow) => {
         let currentMatrix = fieldMatrix.map((e) => e);
-        if (currentMatrix[clickedRow][clickedColumn].hasBomb) {
+        if(exploded){
+            window.confirm('You\'ve exploded, restart the game to play again.');
+        }
+        else if(winner){
+            window.confirm('You\'ve won, restart the game to play again.');
+        }
+        else if (currentMatrix[clickedRow][clickedColumn].hasBomb) {
             currentMatrix[clickedRow][clickedColumn].style = 'block block-danger';
             setFieldMatrix(currentMatrix);
+            setExploded(true);
         }
         else if (!currentMatrix[clickedRow][clickedColumn].clicked) {
             currentMatrix[clickedRow][clickedColumn].style = 'block block-free';
             currentMatrix[clickedRow][clickedColumn].clicked = true;
             getNeighborBombs(clickedColumn, clickedRow, currentMatrix);
-
         }
+
+        checkIfGameEnded();
+
     }
 
     const spreadBombs = (matrix, bombs) => {
         while (bombs > 0) {
             for (let row = 0; row < matrix.length; row++) {
                 for (let column = 0; column < matrix[0].length; column++) {
-                    if (Math.random() > 0.95 && bombs > 0) {
+                    if (Math.random() < 0.01 && bombs > 0) {
                         matrix[row][column].hasBomb = true;
                         bombs--;
                     }
@@ -69,11 +101,21 @@ const GameManager = () => {
         }
 
         setFieldMatrix(matrix);
+        setGameStarted(true);
 
     }
 
+    const handleGameRestart = () =>{
+        setFieldMatrix([]);
+        setGameStarted(false);
+        setExploded(false);
+        setWinner(false);
+    }
+
     const setMatrix = (rowNumber, ColumnNumber, bombs) => {
-        let matrix = [];
+        if(!gameStarted){
+            setBombNumber(bombs);
+            let matrix = [];
         for (let row = 0; row < rowNumber; row++) {
             let rowAux = [];
             for (let column = 0; column < ColumnNumber; column++) {
@@ -90,19 +132,24 @@ const GameManager = () => {
             matrix.push(rowAux);
         }
         spreadBombs(matrix, bombs);
+        }
+        else{
+            window.confirm("The game has already been started")
+        }
+        
     }
-
-    const title = 'Minesweeper';
 
     return (
         <div>
             <Navbar title={title} />
             <div className='gameManager'>
-                <GameForm onSubmit={setMatrix} />
+                <GameForm onSubmit={setMatrix} onGameRestart = {handleGameRestart} gameStarted = {gameStarted}/>
                 <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
+                {winner?<Modal message = {"You win! Restart the game to play again!"}/>:""}
+                {exploded?<Modal message = {"You lose! Restart the game to play again!"}/>:""}
             </div>
         </div>
-    )
+    );
 }
 
 export default GameManager;

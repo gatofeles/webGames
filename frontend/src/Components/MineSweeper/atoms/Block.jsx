@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import './Block.css';
 
 const Block = (props) => {
@@ -14,7 +14,7 @@ const Block = (props) => {
     }
 
     return (
-        <div onClick={handleClick} className={props.block.style}>{props.block.clicked ? props.block.neighbors : ""}</div>
+        <div onClick={handleClick} className={props.block.style}>{props.block.clicked && props.block.neighbors!== 0 ? props.block.neighbors : ""}</div>
     );
 }
 

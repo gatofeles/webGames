@@ -14,16 +14,16 @@ const Row = (props) => {
 const Field = (props) => {
 
     return (
-        <table className='row'>
-            <tbody>
-                {
-                    props.matrix.map((row) => {
-                        return <Row key={props.matrix.indexOf(row)} onUpdateMatrix={props.onUpdateMatrix} row={row} />
-                    })
-                }
-            </tbody>
-        </table>
-
+        props.matrix.length === 0 ? <p className='row'>Choose field dimensions</p> :
+            <table className='row'>
+                <tbody>
+                    {
+                        props.matrix.map((row) => {
+                            return <Row key={props.matrix.indexOf(row)} onUpdateMatrix={props.onUpdateMatrix} row={row} />
+                        })
+                    }
+                </tbody>
+            </table>
     );
 };
 
