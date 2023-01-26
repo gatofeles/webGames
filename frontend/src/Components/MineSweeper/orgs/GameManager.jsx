@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../molecules/Navbar';
 import Field from '../molecules/Field';
 import GameForm from '../molecules/GameForm';
@@ -11,21 +11,39 @@ const GameManager = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const [bombNumber, setBombNumber] = useState(0);
     const [exploded, setExploded] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
     const title = 'Minesweeper';
 
-    const checkIfGameEnded = () =>{
+    useEffect(() => {
+        let interval = null;
+        if (gameStarted && !winner && !exploded) {
+
+            interval = setInterval(() => { setCurrentTime(prevCurrentTime => prevCurrentTime + 1) }, 1000);
+        }
+        else {
+            clearInterval(interval);
+        }
+
+        return () => clearInterval(interval);
+
+    }, [gameStarted]);
+
+
+
+    const checkIfGameEnded = () => {
         const fieldSize = fieldMatrix.length * fieldMatrix[0].length;
         let freedNumber = 0;
         for (let row = 0; row < fieldMatrix.length; row++) {
-            for (let column = 0; column < fieldMatrix[0].length; column++){
-                if(!fieldMatrix[row][column].hasBomb && fieldMatrix[row][column].clicked){
+            for (let column = 0; column < fieldMatrix[0].length; column++) {
+                if (!fieldMatrix[row][column].hasBomb && fieldMatrix[row][column].clicked) {
                     freedNumber++;
                 }
             }
         }
 
-        if(fieldSize - bombNumber === freedNumber){
+        if (fieldSize - bombNumber === freedNumber) {
             setWinner(true);
+            setGameStarted(false);
         }
 
     }
@@ -64,16 +82,18 @@ const GameManager = () => {
 
     const updateMatrix = (clickedColumn, clickedRow) => {
         let currentMatrix = fieldMatrix.map((e) => e);
-        if(exploded){
+        if (exploded) {
             window.confirm('You\'ve exploded, restart the game to play again.');
         }
-        else if(winner){
+        else if (winner) {
             window.confirm('You\'ve won, restart the game to play again.');
         }
         else if (currentMatrix[clickedRow][clickedColumn].hasBomb) {
             currentMatrix[clickedRow][clickedColumn].style = 'block block-danger';
             setFieldMatrix(currentMatrix);
             setExploded(true);
+            setGameStarted(false);
+
         }
         else if (!currentMatrix[clickedRow][clickedColumn].clicked) {
             currentMatrix[clickedRow][clickedColumn].style = 'block block-free';
@@ -105,48 +125,52 @@ const GameManager = () => {
 
     }
 
-    const handleGameRestart = () =>{
+    const handleGameRestart = () => {
         setFieldMatrix([]);
         setGameStarted(false);
         setExploded(false);
         setWinner(false);
+        setCurrentTime(0);
+
+
     }
 
     const setMatrix = (rowNumber, ColumnNumber, bombs) => {
-        if(!gameStarted){
+        if (!gameStarted) {
             setBombNumber(bombs);
             let matrix = [];
-        for (let row = 0; row < rowNumber; row++) {
-            let rowAux = [];
-            for (let column = 0; column < ColumnNumber; column++) {
-                rowAux.push({
-                    rowIndex: row,
-                    columnIndex: column,
-                    style: 'block block-inactive',
-                    clicked: false,
-                    neighbors: 0,
-                    hasBomb: false
-                })
+            for (let row = 0; row < rowNumber; row++) {
+                let rowAux = [];
+                for (let column = 0; column < ColumnNumber; column++) {
+                    rowAux.push({
+                        rowIndex: row,
+                        columnIndex: column,
+                        style: 'block block-inactive',
+                        clicked: false,
+                        neighbors: 0,
+                        hasBomb: false
+                    })
 
+                }
+                matrix.push(rowAux);
             }
-            matrix.push(rowAux);
+            spreadBombs(matrix, bombs);
         }
-        spreadBombs(matrix, bombs);
+        else {
+            window.confirm("The game has already been started");
         }
-        else{
-            window.confirm("The game has already been started")
-        }
-        
+
     }
 
     return (
         <div>
             <Navbar title={title} />
             <div className='gameManager'>
-                <GameForm onSubmit={setMatrix} onGameRestart = {handleGameRestart} gameStarted = {gameStarted}/>
+                <GameForm onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
                 <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
-                {winner?<Modal message = {"You win! Restart the game to play again!"}/>:""}
-                {exploded?<Modal message = {"You lose! Restart the game to play again!"}/>:""}
+                {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
+                {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
+                {!exploded && gameStarted && !winner ? <Modal message={currentTime} /> : ""}
             </div>
         </div>
     );

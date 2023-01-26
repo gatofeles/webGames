@@ -1,6 +1,7 @@
 import React from 'react';
 import Block from '../atoms/Block';
 import './Field.css';
+import Modal from '../atoms/Modal';
 
 const Row = (props) => {
     return (
@@ -14,7 +15,7 @@ const Row = (props) => {
 const Field = (props) => {
 
     return (
-        props.matrix.length === 0 ? <p className='row'>Choose field dimensions</p> :
+        props.matrix.length === 0 ? <Modal message = "Choose field dimensions"/>:
             <table className='row'>
                 <tbody>
                     {

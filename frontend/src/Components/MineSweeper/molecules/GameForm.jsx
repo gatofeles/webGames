@@ -46,7 +46,7 @@ const GameForm = (props) => {
                     <input onChange={handleBombChange} value={bombs.toString()} min={1} max={bombLimit} className='input' type="number" id="bombs" name="bombs"></input>
                 </div>
             </div>
-            {!props.gameStarted?<GameBtn onSubmit={handleSubmit} title={'Set Field'} />:<GameBtn onSubmit={props.onGameRestart} title={'Restart Game'} />}
+            {!props.gameStarted && !props.winner && !props.exploded ? <GameBtn onSubmit={handleSubmit} title={'Set Field'} /> : <GameBtn onSubmit={props.onGameRestart} title={'Restart Game'} />}
         </form>);
 }
 
