@@ -4,6 +4,7 @@ import Field from '../molecules/Field';
 import GameForm from '../molecules/GameForm';
 import Modal from '../atoms/Modal';
 import './GameManager.css';
+import StrongModal from '../atoms/StrongModal';
 
 const GameManager = () => {
     const [fieldMatrix, setFieldMatrix] = useState([]);
@@ -12,11 +13,13 @@ const GameManager = () => {
     const [bombNumber, setBombNumber] = useState(0);
     const [exploded, setExploded] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
+    const [screenBlock, setScreenBlock] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const title = 'Minesweeper';
 
     useEffect(() => {
         let interval = null;
-        if (gameStarted && !winner && !exploded) {
+        if (gameStarted) {
 
             interval = setInterval(() => { setCurrentTime(prevCurrentTime => prevCurrentTime + 1) }, 1000);
         }
@@ -27,8 +30,6 @@ const GameManager = () => {
         return () => clearInterval(interval);
 
     }, [gameStarted]);
-
-
 
     const checkIfGameEnded = () => {
         const fieldSize = fieldMatrix.length * fieldMatrix[0].length;
@@ -83,10 +84,13 @@ const GameManager = () => {
     const updateMatrix = (clickedColumn, clickedRow) => {
         let currentMatrix = fieldMatrix.map((e) => e);
         if (exploded) {
-            window.confirm('You\'ve exploded, restart the game to play again.');
+            setScreenBlock(true);
+            setErrorMessage('You\'ve exploded, restart the game to play again.');
+
         }
         else if (winner) {
-            window.confirm('You\'ve won, restart the game to play again.');
+            setScreenBlock(true);
+            setErrorMessage('You\'ve won, restart the game to play again.');
         }
         else if (currentMatrix[clickedRow][clickedColumn].hasBomb) {
             currentMatrix[clickedRow][clickedColumn].style = 'block block-danger';
@@ -125,14 +129,16 @@ const GameManager = () => {
 
     }
 
+    const handleUnblockScreen = () => {
+        setScreenBlock(false);
+    }
+
     const handleGameRestart = () => {
         setFieldMatrix([]);
         setGameStarted(false);
         setExploded(false);
         setWinner(false);
         setCurrentTime(0);
-
-
     }
 
     const setMatrix = (rowNumber, ColumnNumber, bombs) => {
@@ -157,7 +163,8 @@ const GameManager = () => {
             spreadBombs(matrix, bombs);
         }
         else {
-            window.confirm("The game has already been started");
+            setScreenBlock(true);
+            setErrorMessage("The game has already been started");
         }
 
     }
@@ -165,12 +172,15 @@ const GameManager = () => {
     return (
         <div>
             <Navbar title={title} />
-            <div className='gameManager'>
-                <GameForm onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
-                <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
-                {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
-                {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
-                {!exploded && gameStarted && !winner ? <Modal message={currentTime} /> : ""}
+            <div>
+                {screenBlock ?<div className='gameManager'><StrongModal onUnblock={handleUnblockScreen} message={errorMessage} /></div>  :
+                    <div className='gameManager'><GameForm onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
+                        <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
+                        {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
+                        {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
+                        {!exploded && gameStarted && !winner ? <Modal message={currentTime} /> : ""}</div>
+                }
+
             </div>
         </div>
     );
