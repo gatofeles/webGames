@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 10px;
     background: #3D1766;
     height: 20%;
     border-radius: 5px;
@@ -20,7 +21,10 @@
     opacity: 80%;
     border-radius: 5px;
     padding: 5px;
-    width: 50vw;
-    height: 50vh;
 
 }
+
+.bombImage {
+    width: 100px;
+    height: 100px;
+  }

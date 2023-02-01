@@ -49,6 +49,11 @@ const GameManager = () => {
 
     }
 
+    const handleScreenBlock = (message) =>{
+        setScreenBlock(true);
+        setErrorMessage(message);
+    }
+
     const checkBoundaries = (column, row, matrix) => {
         return row >= 0 && row < matrix.length && column >= 0 && column < matrix[0].length
     }
@@ -84,16 +89,14 @@ const GameManager = () => {
     const updateMatrix = (clickedColumn, clickedRow) => {
         let currentMatrix = fieldMatrix.map((e) => e);
         if (exploded) {
-            setScreenBlock(true);
-            setErrorMessage('You\'ve exploded, restart the game to play again.');
-
+            handleScreenBlock('You\'ve exploded, restart the game to play again.');
         }
         else if (winner) {
-            setScreenBlock(true);
-            setErrorMessage('You\'ve won, restart the game to play again.');
+            handleScreenBlock('You\'ve won, restart the game to play again.');
         }
         else if (currentMatrix[clickedRow][clickedColumn].hasBomb) {
             currentMatrix[clickedRow][clickedColumn].style = 'block block-danger';
+            currentMatrix[clickedRow][clickedColumn].clicked = true;
             setFieldMatrix(currentMatrix);
             setExploded(true);
             setGameStarted(false);
@@ -163,8 +166,7 @@ const GameManager = () => {
             spreadBombs(matrix, bombs);
         }
         else {
-            setScreenBlock(true);
-            setErrorMessage("The game has already been started");
+            handleScreenBlock("The game has already been started");
         }
 
     }
@@ -174,7 +176,7 @@ const GameManager = () => {
             <Navbar title={title} />
             <div>
                 {screenBlock ?<div className='gameManager'><StrongModal onUnblock={handleUnblockScreen} message={errorMessage} /></div>  :
-                    <div className='gameManager'><GameForm onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
+                    <div className='gameManager'><GameForm onBlock = {handleScreenBlock} onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
                         <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
                         {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
                         {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
