@@ -10,7 +10,7 @@ const GameForm = (props) => {
 
     useEffect(() => {
         getBombLimit();
-    });
+    },[currentSize]);
 
     const getBombLimit = () => {
         if (currentSize !== "") {
@@ -20,12 +20,16 @@ const GameForm = (props) => {
     }
 
     const handleSubmit = () => {
-        if (currentSize !== "" && bombs > 0) {
+        if(bombs>=bombLimit){
+            props.onBlock("The number of bombs should be less than the number of cells."+(bombLimit-1).toString()+" bombs for this field.");
+        }
+        else if (currentSize !== "" && bombs > 0) {
             const dimensions = currentSize.split("x");
             props.onSubmit(dimensions[0], dimensions[1], bombs);
         }
+        
         else {
-            window.confirm("You should fill the dimension and the number of bombs.");
+            props.onBlock("You should fill the dimension and the number of bombs.")
         }
     }
 
@@ -40,11 +44,11 @@ const GameForm = (props) => {
     return (
         <form className='gameForm'>
             <div className='inputWrap'>
-                <DropDownSelection onDimChange={handleDimChange} options={sizeOptions} name={"size"} id={"dimension"} />
-                <div>
+                {!props.gameStarted?<DropDownSelection onDimChange={handleDimChange} options={sizeOptions} name={"size"} id={"dimension"} />:''}
+                {!props.gameStarted?<div>
                     <label>No. of Bombs</label>
                     <input onChange={handleBombChange} value={bombs.toString()} min={1} max={bombLimit} className='input' type="number" id="bombs" name="bombs"></input>
-                </div>
+                </div>:''}
             </div>
             {!props.gameStarted && !props.winner && !props.exploded ? <GameBtn onSubmit={handleSubmit} title={'Set Field'} /> : <GameBtn onSubmit={props.onGameRestart} title={'Restart Game'} />}
         </form>);

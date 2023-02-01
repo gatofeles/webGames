@@ -1,6 +1,6 @@
 import React from 'react'
 import './Block.css';
-
+import bomb from '../../../images/explosion.png';
 const Block = (props) => {
 
 
@@ -14,7 +14,7 @@ const Block = (props) => {
     }
 
     return (
-        <div onClick={handleClick} className={props.block.style}>{props.block.clicked && props.block.neighbors!== 0 ? props.block.neighbors : ""}</div>
+        <div onClick={handleClick} className={props.block.style}>{props.block.hasBomb && props.block.clicked?<img className='blockImage' alt = 'Bomb' src={bomb}/>:''}{props.block.clicked && props.block.neighbors !== 0 ? props.block.neighbors : ""}</div>
     );
 }
 
