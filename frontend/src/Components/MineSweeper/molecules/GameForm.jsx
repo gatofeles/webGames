@@ -1,31 +1,15 @@
-import React, { useState, useEffect } from 'react';
 import DropDownSelection from '../atoms/DropDownSelection';
 import GameBtn from '../atoms/GameBtn';
 import './GameForm.css';
 const GameForm = (props) => {
-    const sizeOptions = ["5x5", "8x8", "10x10"];
-    const [currentSize, setCurrentSize] = useState("5x5");
-    const [bombs, setBombs] = useState(0);
-    const [bombLimit, setBombLimit] = useState(0);
-
-    useEffect(() => {
-        getBombLimit();
-    },[currentSize]);
-
-    const getBombLimit = () => {
-        if (currentSize !== "") {
-            const dimensions = currentSize.split('x');
-            setBombLimit(dimensions[0] * dimensions[1])
-        }
-    }
-
+    
     const handleSubmit = () => {
-        if(bombs>=bombLimit){
-            props.onBlock("The number of bombs should be less than the number of cells."+(bombLimit-1).toString()+" bombs for this field.");
+        if(props.bombs>=props.bombLimit){
+            props.onBlock("The number of bombs should be less than the number of cells."+(props.bombLimit-1).toString()+" bombs for this field.");
         }
-        else if (currentSize !== "" && bombs > 0) {
-            const dimensions = currentSize.split("x");
-            props.onSubmit(dimensions[0], dimensions[1], bombs);
+        else if (props.currentSize !== "" && props.bombs > 0) {
+            const dimensions = props.currentSize.split("x");
+            props.onSubmit(dimensions[0], dimensions[1], props.bombs);
         }
         
         else {
@@ -34,20 +18,20 @@ const GameForm = (props) => {
     }
 
     const handleDimChange = (e) => {
-        setCurrentSize(e.target.value);
+        props.onChangeCurrentSize(e.target.value);
     }
 
     const handleBombChange = (e) => {
-        setBombs(e.target.value);
+        props.onSetBombs(e.target.value);
     }
 
     return (
-        <form className='gameForm'>
+        <form className={props.gameStarted?'gameFormLess':'gameForm'}>
             <div className='inputWrap'>
-                {!props.gameStarted?<DropDownSelection onDimChange={handleDimChange} options={sizeOptions} name={"size"} id={"dimension"} />:''}
+                {!props.gameStarted?<DropDownSelection onDimChange={handleDimChange} options={props.sizeOptions} name={"size"} id={"dimension"} />:''}
                 {!props.gameStarted?<div>
                     <label>No. of Bombs</label>
-                    <input onChange={handleBombChange} value={bombs.toString()} min={1} max={bombLimit} className='input' type="number" id="bombs" name="bombs"></input>
+                    <input onChange={handleBombChange} value={props.bombs.toString()} min={1} max={props.bombLimit} className='input' type="number" id="bombs" name="bombs"></input>
                 </div>:''}
             </div>
             {!props.gameStarted && !props.winner && !props.exploded ? <GameBtn onSubmit={handleSubmit} title={'Set Field'} /> : <GameBtn onSubmit={props.onGameRestart} title={'Restart Game'} />}

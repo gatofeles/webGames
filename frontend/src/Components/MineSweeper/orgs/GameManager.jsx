@@ -5,8 +5,11 @@ import GameForm from '../molecules/GameForm';
 import Modal from '../atoms/Modal';
 import './GameManager.css';
 import StrongModal from '../atoms/StrongModal';
+import clock from '../../../images/clock.png';
 
 const GameManager = () => {
+    const sizeOptions = ["5x5", "8x8", "10x10"];
+    const [currentSize, setCurrentSize] = useState("5x5");
     const [fieldMatrix, setFieldMatrix] = useState([]);
     const [winner, setWinner] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
@@ -15,11 +18,20 @@ const GameManager = () => {
     const [currentTime, setCurrentTime] = useState(0);
     const [screenBlock, setScreenBlock] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [stopWatch, setStopWatch] = useState(false);
     const title = 'Minesweeper';
+    const [bombLimit, setBombLimit] = useState(0);
+
+    useEffect(() => {
+        if (currentSize !== "") {
+            const dimensions = currentSize.split('x');
+            setBombLimit(dimensions[0] * dimensions[1])
+        }
+    },[currentSize]);
 
     useEffect(() => {
         let interval = null;
-        if (gameStarted) {
+        if (stopWatch) {
 
             interval = setInterval(() => { setCurrentTime(prevCurrentTime => prevCurrentTime + 1) }, 1000);
         }
@@ -29,7 +41,7 @@ const GameManager = () => {
 
         return () => clearInterval(interval);
 
-    }, [gameStarted]);
+    }, [stopWatch]);
 
     const checkIfGameEnded = () => {
         const fieldSize = fieldMatrix.length * fieldMatrix[0].length;
@@ -44,7 +56,8 @@ const GameManager = () => {
 
         if (fieldSize - bombNumber === freedNumber) {
             setWinner(true);
-            setGameStarted(false);
+            setStopWatch(false);
+
         }
 
     }
@@ -75,7 +88,6 @@ const GameManager = () => {
             for (let x = -1; x < 2; x++) {
                 for (let y = -1; y < 2; y++) {
                     if (checkBoundaries(clickedRow + x, clickedColumn + y, matrix) && !matrix[clickedRow + x][clickedColumn + y].clicked && !matrix[clickedRow + x][clickedColumn + y].hasBomb) {
-                        console.log('enter');
                         matrix[clickedRow + x][clickedColumn + y].style = 'block block-free';
                         matrix[clickedRow + x][clickedColumn + y].clicked = true;
                         setFieldMatrix(matrix);
@@ -99,7 +111,9 @@ const GameManager = () => {
             currentMatrix[clickedRow][clickedColumn].clicked = true;
             setFieldMatrix(currentMatrix);
             setExploded(true);
-            setGameStarted(false);
+            revielBombs(currentMatrix);
+            setStopWatch(false);
+
 
         }
         else if (!currentMatrix[clickedRow][clickedColumn].clicked) {
@@ -116,9 +130,10 @@ const GameManager = () => {
         while (bombs > 0) {
             for (let row = 0; row < matrix.length; row++) {
                 for (let column = 0; column < matrix[0].length; column++) {
-                    if (Math.random() < 0.01 && bombs > 0) {
+                    if (Math.random() < 0.01 && bombs > 0 && !matrix[row][column].hasBomb) {
                         matrix[row][column].hasBomb = true;
                         bombs--;
+                        
                     }
                 }
                 if (bombs <= 0) {
@@ -129,7 +144,20 @@ const GameManager = () => {
 
         setFieldMatrix(matrix);
         setGameStarted(true);
+        setStopWatch(true);
 
+    }
+
+    const revielBombs = (matrix) => {
+            for (let row = 0; row < matrix.length; row++) {
+                for (let column = 0; column < matrix[0].length; column++) {
+                    if (matrix[row][column].hasBomb === true && !matrix[row][column].clicked) {
+
+                        matrix[row][column].style = 'block block-danger-nostep';
+                    }
+                }
+            }
+        setFieldMatrix(matrix);
     }
 
     const handleUnblockScreen = () => {
@@ -142,6 +170,8 @@ const GameManager = () => {
         setExploded(false);
         setWinner(false);
         setCurrentTime(0);
+        setBombNumber(0);
+        setCurrentSize("5x5");
     }
 
     const setMatrix = (rowNumber, ColumnNumber, bombs) => {
@@ -176,11 +206,11 @@ const GameManager = () => {
             <Navbar title={title} />
             <div>
                 {screenBlock ?<div className='gameManager'><StrongModal onUnblock={handleUnblockScreen} message={errorMessage} /></div>  :
-                    <div className='gameManager'><GameForm onBlock = {handleScreenBlock} onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
+                    <div className='gameManager'><GameForm bombLimit = {bombLimit} onSetBombs = {setBombNumber}  bombs = {bombNumber} onChangeCurrentSize = {setCurrentSize} currentSize = {currentSize} sizeOptions = {sizeOptions} onBlock = {handleScreenBlock} onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
                         <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
                         {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
                         {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
-                        {!exploded && gameStarted && !winner ? <Modal message={currentTime} /> : ""}</div>
+                        {!exploded && gameStarted && !winner ?<div className = 'imageBlock'><img className='modalImage' src={clock} alt=""/><Modal message={currentTime} /></div>: ""}</div>
                 }
 
             </div>

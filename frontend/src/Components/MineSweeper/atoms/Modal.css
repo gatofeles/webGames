@@ -1,4 +1,6 @@
 .modal{
+    display: flex;
+    gap: 5px;
     color: #ffffff;
     margin: 10px;
     background: #3D1766;
@@ -6,3 +8,5 @@
     padding: 5px;
     font-size: 0.7rem;
 }
+
+
