@@ -1,6 +1,6 @@
 import React from 'react';
 import './Navbar.css';
-import bomb from '../../../images/sign.png';
+import bomb from '../../../images/explode.png';
 const Navbar = (props) => {
     return (
     <div className='nav'>

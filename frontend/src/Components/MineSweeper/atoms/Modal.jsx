@@ -4,7 +4,8 @@ import './Modal.css';
 const Modal = (props) => {
 
     return (
-        <div className='modal'>{props.message}</div>
+        <div className='modal'>
+        {props.message}</div>
     );
 }
 
