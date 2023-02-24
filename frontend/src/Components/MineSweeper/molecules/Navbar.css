@@ -1,8 +1,14 @@
 
-.nav{
+.navInner{
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 1;
+}
+
+.nav{
+    display: flex;
+    align-items: center;
     gap:10px;
     border-radius: 4px;
     width: 100%;
@@ -14,4 +20,16 @@
 .bombNav{
     width: 50px;
     height: 50px;
+}
+
+.bg{
+    margin-left: 5px;  
+}
+
+.none{
+    display: none;
+}
+
+.bg:hover{
+    opacity: 0.7;
 }

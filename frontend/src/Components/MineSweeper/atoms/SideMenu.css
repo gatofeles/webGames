@@ -1,0 +1,14 @@
+.menu{
+  background-color: rgb(73, 76, 78);
+  height: 100%;
+  width: 100px;
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  transition: 2s;
+}
+
+.off{
+  display: none;
+}
