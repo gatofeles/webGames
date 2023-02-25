@@ -16,7 +16,7 @@ const Field = (props) => {
 
     return (
         props.matrix.length === 0 ? <Modal message = "Choose field dimensions"/>:
-            <table className='row'>
+            <table id = 'field' className='row'>
                 <tbody>
                     {
                         props.matrix.map((row) => {
