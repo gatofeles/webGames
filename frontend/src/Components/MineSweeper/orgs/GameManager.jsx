@@ -6,6 +6,7 @@ import Modal from '../atoms/Modal';
 import './GameManager.css';
 import StrongModal from '../atoms/StrongModal';
 import clock from '../../../images/clock.png';
+import SideMenu from '../atoms/SideMenu';
 
 const GameManager = () => {
     const sizeOptions = ["5x5", "8x8", "10x10"];
@@ -21,6 +22,7 @@ const GameManager = () => {
     const [stopWatch, setStopWatch] = useState(false);
     const title = 'Minesweeper';
     const [bombLimit, setBombLimit] = useState(0);
+    const [sideBarOpen, setSideBarOpen] = useState(false);
 
     useEffect(() => {
         if (currentSize !== "") {
@@ -57,6 +59,8 @@ const GameManager = () => {
         if (fieldSize - bombNumber === freedNumber) {
             setWinner(true);
             setStopWatch(false);
+            let currentMatrix = fieldMatrix.map((e) => e);
+            revielBombs(currentMatrix);
 
         }
 
@@ -113,8 +117,6 @@ const GameManager = () => {
             setExploded(true);
             revielBombs(currentMatrix);
             setStopWatch(false);
-
-
         }
         else if (!currentMatrix[clickedRow][clickedColumn].clicked) {
             currentMatrix[clickedRow][clickedColumn].style = 'block block-free';
@@ -172,6 +174,7 @@ const GameManager = () => {
         setCurrentTime(0);
         setBombNumber(0);
         setCurrentSize("5x5");
+        setStopWatch(false);
     }
 
     const setMatrix = (rowNumber, ColumnNumber, bombs) => {
@@ -203,14 +206,19 @@ const GameManager = () => {
 
     return (
         <div>
-            <Navbar title={title} />
+            <Navbar gameStarted = {gameStarted} isSideBarOpen = {sideBarOpen} onClickSideBar = {setSideBarOpen} title={title} />
             <div>
                 {screenBlock ?<div className='gameManager'><StrongModal onUnblock={handleUnblockScreen} message={errorMessage} /></div>  :
-                    <div className='gameManager'><GameForm bombLimit = {bombLimit} onSetBombs = {setBombNumber}  bombs = {bombNumber} onChangeCurrentSize = {setCurrentSize} currentSize = {currentSize} sizeOptions = {sizeOptions} onBlock = {handleScreenBlock} onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
-                        <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
-                        {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
-                        {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
-                        {!exploded && gameStarted && !winner ?<div className = 'imageBlock'><img className='modalImage' src={clock} alt=""/><Modal message={currentTime} /></div>: ""}</div>
+                    <div className='gameManager'>
+                        <SideMenu open = {sideBarOpen } onClickSideBar = {setSideBarOpen} />
+                        <div className='gameInner'>
+                            <GameForm bombLimit = {bombLimit} onSetBombs = {setBombNumber}  bombs = {bombNumber} onChangeCurrentSize = {setCurrentSize} currentSize = {currentSize} sizeOptions = {sizeOptions} onBlock = {handleScreenBlock} onSubmit={setMatrix} onGameRestart={handleGameRestart} gameStarted={gameStarted} winner={winner} exploded={exploded} />
+                            <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
+                            {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
+                            {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
+                            {!exploded && gameStarted && !winner ?<div className = 'imageBlock'><img className='modalImage' src={clock} alt=""/><Modal message={currentTime} /></div>: ""}
+                        </div>
+                    </div>
                 }
 
             </div>
