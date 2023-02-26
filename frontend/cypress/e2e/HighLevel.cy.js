@@ -37,7 +37,7 @@ describe('Create a field with NxN dimensions and check if timer is working', () 
 
 })
 
-describe('Restart the game and the clock restarts', ()=>{
+describe('Restart the game and the timer restarts', ()=>{
   beforeEach(()=>{
     cy.visit('/');
   });
