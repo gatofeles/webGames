@@ -34,7 +34,6 @@ const GameManager = () => {
     useEffect(() => {
         let interval = null;
         if (stopWatch) {
-
             interval = setInterval(() => { setCurrentTime(prevCurrentTime => prevCurrentTime + 1) }, 1000);
         }
         else {
@@ -216,7 +215,7 @@ const GameManager = () => {
                             <Field matrix={fieldMatrix} onUpdateMatrix={updateMatrix} />
                             {winner ? <Modal message={"You win in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
                             {exploded ? <Modal message={"You lose in " + currentTime + " seconds! Restart the game to play again!"} /> : ""}
-                            {!exploded && gameStarted && !winner ?<div className = 'imageBlock'><img className='modalImage' src={clock} alt=""/><Modal message={currentTime} /></div>: ""}
+                            {!exploded && gameStarted && !winner ?<div id = 'clock' className = 'imageBlock'><img className='modalImage' src={clock} alt=""/><Modal message={currentTime} /></div>: ""}
                         </div>
                     </div>
                 }

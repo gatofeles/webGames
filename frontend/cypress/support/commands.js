@@ -24,13 +24,20 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('generateField', (size, bombs) => {
+Cypress.Commands.add('testFieldAndTimer', (size, bombs) => {
     let dim = size.split('x')[0];
-    cy.visit('/');
+    cy.clock();
     cy.get('[id=dimension]').should('contain.value', '5x5').select(size).should('contain.value', size);
     cy.get('[id=bombs]').should('contain.value', 0).clear().type(bombs).should('contain.value', bombs);
     cy.get('.gameBtn').contains('Set Field').click();
     cy.get('[id=field').find('tr').should('have.length', dim);
     cy.get('[id=field').find('td').should('have.length', dim*dim);
+    cy.get('[id=clock]').should('contain.text', 0);
+    cy.tick(2000);
+    cy.get('[id=clock]').should('contain.text', 2);
+})
 
+Cypress.Commands.add('fillBombAndDimension', (bombs, size)=>{
+    cy.get('[id=dimension]').should('contain.value', '5x5').select(size).should('contain.value', size);
+    cy.get('[id=bombs]').should('contain.value', 0).clear().type(bombs).should('contain.value', bombs);
 })
