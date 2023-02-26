@@ -4,6 +4,17 @@ describe('Try to create a field without bombs and get an error modal',()=>{
       cy.fillBombAndDimension(0, '5x5');
       cy.get('.gameBtn').contains('Set Field').click();
       cy.get('.strongModal').find('.smallBlock').should('contain.text', 'You should fill the dimension and the number of bombs.');
+      cy.get('.gameBtn').contains('Ok').click();
+    })
+})
+
+describe('Try to create a field with more bombs than allowed and get an error modal', ()=>{
+    it('Create field with 26 bombs when the max is 24', ()=>{
+      cy.visit('/');
+      cy.fillBombAndDimension(26, '5x5');
+      cy.get('.gameBtn').contains('Set Field').click();
+      cy.get('.strongModal').find('.smallBlock').should('contain.text', 'The number of bombs should be less than the number of cells.24 bombs for this field.');
+      cy.get('.gameBtn').contains('Ok').click();
     })
 })
 
