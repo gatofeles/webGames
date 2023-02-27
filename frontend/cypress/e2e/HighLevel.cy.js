@@ -10,7 +10,6 @@ describe('Plays the game', ()=>{
   })
 })
 
-
 describe('Try to create a field without bombs and get an error modal',()=>{
     it('Create a field without bombs', ()=>{
       cy.visit('/');
