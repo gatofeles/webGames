@@ -1,3 +1,16 @@
+describe('Plays the game', ()=>{
+  beforeEach(()=>{
+    cy.visit('/');
+  });
+  it('Plays the game with field 5x5 and 5 bombs', ()=>{
+    cy.fillBombAndDimension(2, '5x5', 0);
+    cy.get('.gameBtn').contains('Set Field').click();
+    cy.playAGame(5, 5); 
+
+  })
+})
+
+
 describe('Try to create a field without bombs and get an error modal',()=>{
     it('Create a field without bombs', ()=>{
       cy.visit('/');
@@ -38,16 +51,17 @@ describe('Create a field with NxN dimensions and check if timer is working', () 
 })
 
 describe('Restart the game and the timer restarts', ()=>{
-  beforeEach(()=>{
-    cy.visit('/');
-  });
-
+ 
   it('Create a field and then restart the game with 0 seconds', ()=>{
+    cy.visit('/');
     cy.testFieldAndTimer('5x5', 5);
     cy.get('.gameBtn').contains('Restart').click();
     cy.testFieldAndTimer('10x10', 5);
   })
 })
+
+
+
 
 
 
