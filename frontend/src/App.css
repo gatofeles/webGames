@@ -3,3 +3,13 @@ body {
     margin: 0px;
     padding: 0px;
 }
+
+@media only screen and (max-width: 500px) and (max-height: 900px) {
+    body { 
+        background: url('images/desert.png')  no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+   }
+}
